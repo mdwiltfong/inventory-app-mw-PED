@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,IntegerField,FloatField,SelectField
-from wtforms.validators import InputRequired, Email, Optional,Length,url
+from wtforms.validators import InputRequired
 
 class CreateItem(FlaskForm):
+  ''' WTForms class for creating an inventory item '''
   name=StringField('Name',validators=[InputRequired()])
   price=FloatField('Price',validators=[InputRequired()])
   quantity=IntegerField('Quantity',validators=[InputRequired()])
@@ -13,5 +14,6 @@ class CreateItem(FlaskForm):
 
   
 class CreateWarehouse(FlaskForm):
+  ''' WTforms class for creating a Warehouse '''
   name=StringField('Name',validators=[InputRequired()])
   

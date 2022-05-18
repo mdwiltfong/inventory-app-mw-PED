@@ -1,14 +1,11 @@
 from unittest import TestCase
 from app import app
+from models import db,Warehouse,Item
 
-from flask import request,session
-from app import app
 
-from models import db,connect_db,Warehouse,Item
-
-from dotenv import load_dotenv, find_dotenv
 
 class test_crud(TestCase):
+    ''' Reseed the database between tests '''
     def setUp(self):
         db.drop_all()
         db.create_all()

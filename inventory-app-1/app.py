@@ -1,8 +1,7 @@
-from flask import Flask, request, render_template,flash,redirect
+from flask import Flask, render_template,flash,redirect
 from sqlalchemy.exc import IntegrityError
 from models import Item, db, connect_db,Warehouse
 from forms import CreateItem, CreateWarehouse
-from flask_sqlalchemy import SQLAlchemy
 db_name='inventory-app-test'
 
 app = Flask(__name__)
@@ -15,15 +14,14 @@ connect_db(app)
 db.create_all()
 @app.route('/')
 def load_index():
-    """ Returns homepage"""
-    #all_items=db.view_all_items(db_name)
+    """ Returns homepage and an entire list of items in the db"""
     items=Item.query.all()
     warehouses=Warehouse.query.all()
     return render_template("index.html", items=items,warehouses=warehouses)
 
 @app.route('/create_item', methods=["POST","GET"])
 def create_item():
-    """Creates inventory item"""
+    """Creates inventory item or renders create inventory item form"""
     try:
             form=CreateItem()
             warehouses=Warehouse.query.all()
@@ -46,7 +44,7 @@ def create_item():
     return render_template('create_item_form.html',form=form,warehouses=warehouses)
 @app.route('/create_warehouse', methods=["POST","GET"])
 def create_warehouse():
-    """Creates Warehouse Location"""
+    """Creates Warehouse Location or renders create inventory warehouse location"""
     try:  
       form=CreateWarehouse()
       if form.validate_on_submit():
@@ -62,6 +60,8 @@ def create_warehouse():
     return render_template('create_warehouse_form.html',form=form)
 @app.route('/edit_item/<int:sku>/edit',methods=['GET','POST'])
 def edit_item(sku):
+    """Edit a specific item by it'sku
+     or renders the edit item form with fields pre-populated with pre-existing daata"""
     try:
         item=Item.query.get_or_404(sku)
         form=CreateItem(obj=item) 
@@ -83,12 +83,13 @@ def edit_item(sku):
 
 @app.route('/delete_item/<int:sku>',methods=['POST','GET'])
 def delete_item(sku):
+  ''' Deletes a specific item by it's SKU '''
   Item.query.filter_by(sku=sku).delete()
   db.session.commit()
   flash(f"Item {sku} deleted!","success")
   return redirect('/')
     
-# Makes sure this is the main process
+# This function is solely for running the application on replit's built in browser. If running locally, it will have to commented out.
 ''' app.run(
   host = "0.0.0.0", # or 127.0.0.1
   port = 8080, # make sure this is a non privileged port

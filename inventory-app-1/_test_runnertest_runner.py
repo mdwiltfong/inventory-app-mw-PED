@@ -3,7 +3,10 @@ import _test_runnertest_suite
 import os
 import json
 from time import sleep
-
+''' These functions are related to Replit's built in unit test feature. 
+At the time of running this the unit test feature was consistently failing,
+yet tests were able to be developed and ran locally. 
+  '''
 suite = unittest.TestLoader().loadTestsFromTestCase(
   _test_runnertest_suite.UnitTests)
 f = open(os.devnull,"w")

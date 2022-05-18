@@ -1,7 +1,11 @@
-"""Seed file to make sample data for pets db."""
+"""Seed file to make sample data for inventory-app-test db.
+You can run this file in ipython to refresh the database. 
+To be clear, the following will delete all tables in the DB, and then recreate them. 
+At the point of recration they are empty. It will then add warehouses and items. 
+"""
 
 from models import Item,Warehouse,db
-from app import app
+
 
 # Create all tables
 db.drop_all()
