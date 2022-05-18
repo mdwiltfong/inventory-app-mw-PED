@@ -1,30 +1,41 @@
-## Tasks
+# Project Title: Inventory-app
 
-- Build an inventory tracking web application for a logistics company.
-- High quality back end code
-- Custom UIs and interactive frameworks are not necessary.
-- Ideally the application can run within 15 minutes.
-- Provide instructions on how to use your application.
-- Project should be shared as a public GitHub repo.
-- Keep in mind how more features can be added in the future.
+## Project Description
 
-# Required features
+This app was developed to challenge my backend skills in Flask. The application can do the following:
 
-- Create inventory items
-- Edit inventory items
-- Delete them
-- View a list of them
+- Create Inventory Items
+- View all inventory items stored in the database
+- Update Inventory Items
+- Delete inventory items.
 
-# ONE of the following Extra features
+The app also has an extra feature of being able to create warehouses, and then assign inventory to those warehouses.
 
-- When deleting, allow deletion comments and undeletion
-- Ability to create warehouses/locations and assign inventory to specific locations
-- Ability to create "shipments" and assign inventory to the shipment, and adjust inventory appropriately.
+## Features
 
-## Step 2: Run the app on Replit
+This app used the following technologies:
 
-- Create a Replit account and follow the instructions (you can use the YouTube video) on how to get started
-  Once you have created your account, link your GitHub challenge link to your Replit account
+- Sqlite3 as a database
+- Flask WTForms
+- Jninja
+- Bootstrap
+- SQLAlchemy
 
-*Submit your github link for the code in your application
-*Submit your Replit link for deploying in your application
+In addition, the app has a full suite of unit tests, integration tests, as well as comments to document the app's functionality. This means the app will support future developers who wish to add to the application.
+
+## What I learned
+
+This project was a great opportunity to learn more about Replit, and the various technologies it uses. For example, SQLITE. Although it behaves similar to PSQL since
+it is a relational database, it was nonetheless interesting to see how much carries over from PSQL.
+
+In addition, it was interesting to explore how inventory applications work. I have worked with various inventory systems in the past, as a user, and it's fascinating the amount of relationships are maintained in large scale inventory system.
+
+## How to run/install the application
+
+The instructions to install/run the application will change depending on whether you are running the application locally or on Replit. I have covered both scenarios below.
+
+# Replit
+
+- It should not be necessary to reinstall all the packages/dependancies. Although, it
+- It should not be necessary to reinstall all the packages/dependancies. Although, it
+- It should not be necessary to reinstall all the packages/dependancies. Although, it
