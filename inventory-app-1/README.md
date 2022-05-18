@@ -32,10 +32,18 @@ In addition, it was interesting to explore how inventory applications work. I ha
 
 ## How to run/install the application
 
-The instructions to install/run the application will change depending on whether you are running the application locally or on Replit. I have covered both scenarios below.
+The instructions to install/run the application will change depending on whether you are running the application locally or on Replit. To help ease any confusion, I have created two branches which can be accessed on Replit. The branch geared for running the app on Replit is `master` while the branch geared for running the app locally will be on `main`.
 
-# Replit
+# Running the app on Replit
 
-- It should not be necessary to reinstall all the packages/dependancies. Although, it
-- It should not be necessary to reinstall all the packages/dependancies. Although, it
-- It should not be necessary to reinstall all the packages/dependancies. Although, it
+- It should not be necessary to reinstall all the packages/dependancies. This is unrecommended since it can take a while for Replit to install them all. In addition, Replit tends to remove some dependencies to save on storage. Nonetheless when clicking on "Run" Replit the app will install `flask_wtf` and `flask_sqlalchemy` before running the app. In the event the app fails after clicking "Run," with an error related to it's dependencies you can install all dependencies by running `pip install -r requirements.txt` in the console.
+
+- You should see the server running in the console as well as the app running in Replit's internal browser tool. It is highly recommended to NOT interact with the app in the browser tool. You can run the app in your browser by clicking on "Open in new tab" button near the top right of the window. It will be right under the "Invite" and search button. Once you are viewing the app in your browser and not in Replit's browser, the app is ready to be tested.
+
+# Running the app Locally
+
+- The code on Replit can be located on GitHub. The small difference between the GitHub repo and Replit is that the `app.run()` command is commented-out in the GitHub repo. This is because this command is solely used to run the application on Replit.
+- Once you download the code, you should first create an virtual enviornment. You can do this by running `python3 -m venv venv` in your terminal. You'll then need to activate it by running `source/bin/activate`
+- Once you have initalized your virtual enviornment, you can install all dependancies in the `requirements.txt` file. You can do this by running `pip install -r requirements.txt`
+- After all dependancies are installed, you can spin up the app by running `export FLASK_ENV=development; flask run`
+- The app will then open in your browser on localhost: 5000.
