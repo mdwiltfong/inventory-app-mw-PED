@@ -131,9 +131,18 @@ class test_crud(TestCase):
             updated_item=Item.query.filter(Item.sku==123456).first()
 
             self.assertEqual(resp.status_code,200)
-            self.assertIn('Item 123456 updated!',html)
-            self.assertEqual(updated_item.name,data['name'])
-            self.assertEqual(updated_item.price,data['price'])
-            self.assertEqual(updated_item.quantity,data['quantity'])
+            self.assertIn('Item 123456 already exists',html)
+            self.assertNotEqual(updated_item.name,data['name'])
+            self.assertNotEqual(updated_item.price,data['price'])
+            self.assertNotEqual(updated_item.quantity,data['quantity'])
+
+    def test_delete_item(self):
+        """Sending a post request to the /delete_item route will delete an item from the db"""
+        with app.test_client() as client:
+            resp=client.post('/delete_item/123456',follow_redirects=True)
+            html=resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code,200)
+            self.assertIn('Item 123456 deleted!',html)
 
 

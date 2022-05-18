@@ -81,13 +81,11 @@ def edit_item(sku):
         return redirect('/')
     return render_template("edit_item_form.html", form=form,item=item)
 
-@app.route('/assign_inventory',methods=['GET','POST'])
-
-@app.route('/delete_item/<int:sku>',methods=['GET','POST'])
+@app.route('/delete_item/<int:sku>',methods=['POST','GET'])
 def delete_item(sku):
   Item.query.filter_by(sku=sku).delete()
   db.session.commit()
-  flash(f"Item {id} deleted!","success")
+  flash(f"Item {sku} deleted!","success")
   return redirect('/')
     
 # Makes sure this is the main process
