@@ -60,23 +60,25 @@ def create_warehouse():
       return redirect('/')
     
     return render_template('create_warehouse_form.html',form=form)
-@app.route('/edit_item/<int:id>/edit',methods=['GET','POST'])
-def edit_item(id):
-  item=Item.query.get_or_404(id)
-  form=CreateItem(obj=item) 
-  warehouses=Warehouse.query.all()
-  form.warehouse.choices=[(w.name) for w in warehouses]
-  if form.validate_on_submit():
-    item.name=form.name.data
-    item.price=form.price.data
-    item.quantity=form.quantity.data
-    item.sku=form.sku.data
-    item.warehouse_id=form.warehouse.data
-    db.session.commit()    
-    flash(f"Item {id} updated!","success")
-    return redirect('/')
-
-  else:
+@app.route('/edit_item/<int:sku>/edit',methods=['GET','POST'])
+def edit_item(sku):
+    try:
+        item=Item.query.get_or_404(sku)
+        form=CreateItem(obj=item) 
+        warehouses=Warehouse.query.all()
+        form.warehouse.choices=[(w.name) for w in warehouses]
+        if form.validate_on_submit():
+          item.name=form.name.data
+          item.price=form.price.data
+          item.quantity=form.quantity.data
+          item.sku=form.sku.data
+          item.warehouse_id=form.warehouse.data
+          db.session.commit()    
+          flash(f"Item {sku} updated!","success")
+          return redirect('/')
+    except IntegrityError:
+        flash(f"Item {sku} already exists","danger")
+        return redirect('/')
     return render_template("edit_item_form.html", form=form,item=item)
 
 @app.route('/assign_inventory',methods=['GET','POST'])
@@ -89,8 +91,8 @@ def delete_item(sku):
   return redirect('/')
     
 # Makes sure this is the main process
-app.run(
+''' app.run(
   host = "0.0.0.0", # or 127.0.0.1
   port = 8080, # make sure this is a non privileged port
   debug = True # this will allow us to easily fix problems and bugs
-)
+) '''

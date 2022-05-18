@@ -32,7 +32,7 @@ class Item(db.Model):
   warehouse=db.relationship('Warehouse')
  
   def __repr__(self):
-    return f'<Item #{self.id} {self.name} {self.price}>'
+    return f'<Item #{self.name} {self.price}>'
 
 class Warehouse(db.Model):
   __tablename__='warehouses'
