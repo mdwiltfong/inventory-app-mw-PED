@@ -96,7 +96,12 @@ class test_crud(TestCase):
             self.assertEqual(new_warehouse.name,data['name'])
 
     def test_edit_item(self):
-        """post request to /edit_item should return a 200 http response with a banner saying 'Item Update' """
+        """Post request to /edit_item will do the following:
+            - Edit an item.
+            - Return HTTP status 200 (meaning a successful redirect occured)
+            - Change the warehouse location, which will assign the inventory. 
+            - Render a banner with a success message
+         """
         with app.test_client() as client:
             data={
                 "name":'Cheese',
@@ -115,6 +120,8 @@ class test_crud(TestCase):
             self.assertEqual(updated_item.name,data['name'])
             self.assertEqual(updated_item.price,data['price'])
             self.assertEqual(updated_item.quantity,data['quantity'])
+            self.assertEqual(updated_item.warehouse.name,data['warehouse'])
+            self.assertEqual(updated_item.sku,data['sku'])
     def test_edit_item_error(self):
         """Updating an item to an already existing SKU will raise an error"""
         with app.test_client() as client:
