@@ -8,6 +8,11 @@ def connect_db(app):
 
 class Item(db.Model):
   __tablename__='items'
+  id=db.Column(
+    db.Integer,
+    primary_key=True,
+    autoincrement=True
+  )
   name=db.Column(
     db.Text,
     nullable=False
@@ -22,8 +27,7 @@ class Item(db.Model):
   )
   sku=db.Column(
     db.Integer,
-    nullable=False,
-    primary_key=True
+    nullable=False
   )
   warehouse_id=db.Column(
     db.Text,
@@ -32,7 +36,7 @@ class Item(db.Model):
   warehouse=db.relationship('Warehouse')
  
   def __repr__(self):
-    return f'<Item #{self.name} {self.price}>'
+    return f'<Item #{self.id} {self.name} {self.price}>'
 
 class Warehouse(db.Model):
   __tablename__='warehouses'

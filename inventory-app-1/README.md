@@ -36,7 +36,7 @@ The instructions to install/run the application will change depending on whether
 
 # Running the app on Replit
 
-- It should not be necessary to reinstall all the packages/dependancies. This is unrecommended since it can take a while for Replit to install them all. In addition, Replit tends to remove some dependencies to save on storage. Nonetheless when clicking on "Run" Replit the app will install `flask_wtf` and `flask_sqlalchemy` before running the app. In the event the app fails after clicking "Run," with an error related to it's dependencies you can install all dependencies by running `pip install -r requirements.txt` in the console.
+- It should not be necessary to reinstall all the packages/dependancies. This is unrecommended since it can take a while for Replit to install them all. In addition, Replit tends to remove some dependencies to save on storage. You'll have to install only two packages by running `pip install flask_wtf` and then `pip install flask_sqlalchemy`. In the event the app fails after clicking "Run," with an error related to it's dependencies you can install ALL dependencies by running `pip install -r requirements.txt` in the console.
 
 - You should see the server running in the console as well as the app running in Replit's internal browser tool. It is highly recommended to NOT interact with the app in the browser tool. You can run the app in your browser by clicking on "Open in new tab" button near the top right of the window. It will be right under the "Invite" and search button. Once you are viewing the app in your browser and not in Replit's browser, the app is ready to be tested.
 
@@ -47,3 +47,10 @@ The instructions to install/run the application will change depending on whether
 - Once you have initalized your virtual enviornment, you can install all dependancies in the `requirements.txt` file. You can do this by running `pip install -r requirements.txt`
 - After all dependancies are installed, you can spin up the app by running `export FLASK_ENV=development; flask run`
 - The app will then open in your browser on localhost: 5000.
+- Running the app locally will also allow you to run/execute the tests that were written for the app. You can run `python3 -m unittest -v` in your terminal to see summary of the tests.
+
+## Quick Demo Guide
+
+# Create an inventory item
+
+- You can create an inventory item by clicking on the `Create inventory item` button.
