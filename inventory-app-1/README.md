@@ -29,7 +29,12 @@ In addition, the app has a full suite of unit tests, integration tests, as well 
 This project was a great opportunity to learn more about Replit, and the various technologies it uses. For example, SQLITE. Although it behaves similar to PSQL since
 it is a relational database, it was nonetheless interesting to see how much carries over from PSQL.
 
+<<<<<<< HEAD
 In addition, it was interesting to explore how inventory applications work. In my case I had decided to implement a one-to-one relationship between warehouses and items. Yet, I used a SKU column on the frontend to help communicate to the client that if they wanted to distribute items, they'll have to use a SKU to do so.
+=======
+In addition, it was interesting to explore how inventory applications work. In my case I had decided to implement a one-to-one relationship between warehouses and items. Yet, I used a SKU column on the frontend to help communicate to the client that if they wanted to distribute items, they'll have to use a SKU to do so.
+
+> > > > > > > ea1f26b65e9451e4197e4c4afdc663cd5d4c3c7d
 
 ## How to run/install the application
 
