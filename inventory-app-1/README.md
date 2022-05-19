@@ -41,6 +41,11 @@ The instructions to install/run the application will change depending on whether
 
 - You should see the server running in the console as well as the app running in Replit's internal browser tool. It is highly recommended to NOT interact with the app in the browser tool. You can run the app in your browser by clicking on "Open in new tab" button near the top right of the window. It will be right under the "Invite" and search button. Once you are viewing the app in your browser and not in Replit's browser, the app is ready to be tested.
 
+![image](https://user-images.githubusercontent.com/76107997/169199250-cd473fc2-dead-47ed-938c-3586aae4e722.png)
+
+
+
+
 # Running the app Locally
 
 - The code on Replit can also be located on GitHub. The main difference the codebase in GitHub and the codebase in Replit, is that the codebase in GitHub has tests that can be ran locally. In addition, the `app.run()` function which is needed to run Replit codebase in the browser is commented-out in the GitHub repo.
