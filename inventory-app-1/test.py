@@ -52,7 +52,7 @@ class test_crud(TestCase):
                 'price':123,
                 'quantity': 43,
                 'sku':375159,
-                'warehouse':'Frisco'
+                'warehouse_id':'Frisco'
             }
         
             resp=client.post('/create_item',data=data,follow_redirects=True)
@@ -61,22 +61,6 @@ class test_crud(TestCase):
             self.assertEqual(resp.status_code,200)
             self.assertIn('Item Created',html)
             self.assertEqual(new_item.sku,data['sku'])
-    def test_create_error(self):
-        """post request with an already existing SKU should be rejected and raise an alert banner"""
-        with app.test_client() as client:
-            data={
-                "name":'cheese',
-                'price':123,
-                'quantity': 43,
-                'sku':123456,
-                'warehouse':'Frisco'
-            }
-            resp=client.post('/create_item',data=data,follow_redirects=True)
-            html = resp.get_data(as_text=True)
-            failed_created_item=Item.query.filter(Item.sku == data['sku']).all()
-            self.assertEqual(len(failed_created_item),1)
-            self.assertEqual(resp.status_code,200)
-            self.assertIn('SKU already exists',html)
     def test_create_warehouse(self):
         """post request to /create_warehouse will return a 200 
         http response with a banner saying 'warehouse created"""
@@ -105,41 +89,20 @@ class test_crud(TestCase):
                 'price':999,
                 'quantity':445,
                 'sku':123456,
-                'warehouse':'Las Vegas'
+                'warehouse_id':'Las Vegas'
             }
-            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
+            resp=client.post('/edit_item/1/edit',data=data,follow_redirects=True)
 
             html=resp.get_data(as_text=True)
             updated_item=Item.query.filter(Item.sku==123456).first()
 
             self.assertEqual(resp.status_code,200)
-            self.assertIn('Item 123456 updated!',html)
+            self.assertIn('Item 1 updated!',html)
             self.assertEqual(updated_item.name,data['name'])
             self.assertEqual(updated_item.price,data['price'])
             self.assertEqual(updated_item.quantity,data['quantity'])
-            self.assertEqual(updated_item.warehouse.name,data['warehouse'])
+            self.assertEqual(updated_item.warehouse.name,data['warehouse_id'])
             self.assertEqual(updated_item.sku,data['sku'])
-    def test_edit_item_error(self):
-        """Updating an item to an already existing SKU will raise an error"""
-        with app.test_client() as client:
-            data={
-                "name":'Cheese',
-                'price':999,
-                'quantity':445,
-                'sku':456789,
-                'warehouse':'Las Vegas'
-            }
-            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
-
-            html=resp.get_data(as_text=True)
-            updated_item=Item.query.filter(Item.sku==123456).first()
-
-            self.assertEqual(resp.status_code,200)
-            self.assertIn('Item 123456 already exists',html)
-            self.assertNotEqual(updated_item.name,data['name'])
-            self.assertNotEqual(updated_item.price,data['price'])
-            self.assertNotEqual(updated_item.quantity,data['quantity'])
-
     def test_delete_item(self):
         """Sending a post request to the /delete_item route will delete an item from the db"""
         with app.test_client() as client:
