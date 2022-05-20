@@ -3,12 +3,14 @@
 <table style="margin:0px; max-width: 50%;" class="table container">
     <a href="/create_item" class="btn btn-primary ">Create Inventory Item</a>
     <a href="/create_warehouse" class="btn btn-primary mx-3">Create Warehouse Location</a>
+    <a href="/assign_inventory/{{item.sku}}" class="btn btn-primary mx-3">Assign Inventory</a>
     <div class="container d-flex justify-content-center" style="min-height:26px">
         {% for category, msg in get_flashed_messages(with_categories=true) %}
         <p style="text-align:center ; width:auto" class="p-0 w-25 alert alert-{{category}}  m-0">{{msg}}</p>
         {% endfor %}
     </div>
     <h2>Inventory for Item: {{item.sku}} ({{item.name}})</h2>
+    <p>Total Quantity: {{item.total_quantity}}</p>
     <thead>
         <tr>
             <th style="text-align:center" scope="col">Warehouse</th>

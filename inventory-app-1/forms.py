@@ -14,9 +14,8 @@ class CreateWarehouse(FlaskForm):
 
 
 class CreateAssignment(FlaskForm):
-  items_sku=IntegerField('Items SKU',validators=[InputRequired()])
-  warehouse_name=StringField('Warehouse Name',validators=[InputRequired()])
+  warehouse_name=SelectField('Warehouse')
   quantity=IntegerField('Quantity',validators=[InputRequired()])
 class EditAssignment(FlaskForm):
-  warehouse_name=StringField('Warehouse Name',validators=[InputRequired()])
+  warehouse_name=SelectField('Warehouse')
   quantity=IntegerField('Quantity',validators=[InputRequired()])

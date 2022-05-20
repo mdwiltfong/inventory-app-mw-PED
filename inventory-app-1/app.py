@@ -88,6 +88,8 @@ def view_inventory(sku):
 def edit_inventory(sku,warehouse):
     assignment=ItemWarehouse.query.filter(ItemWarehouse.items_sku ==sku, ItemWarehouse.warehouse_name==warehouse).first()
     form=EditAssignment(obj=assignment)
+    warehouses=Warehouse.query.all()
+    form.warehouse_name.choices=[(w.name) for w in warehouses]
     if form.validate_on_submit():
           assignment.items_sku=form.items_sku.data
           assignment.warehouse_name=form.warehouse_name.data
@@ -97,6 +99,20 @@ def edit_inventory(sku,warehouse):
           return redirect(f'/view_inventory/{assignment.items_sku}')
     else:
         return render_template("edit_inventory_form.html",form=form,assignment=assignment)
+
+@app.route('/assign_inventory/<int:sku>',methods=['GET','POST'])
+def assign_inventory(sku):
+      item=Item.query.get_or_404(sku)
+      form=CreateAssignment()
+      warehouses=Warehouse.query.all()
+      form.warehouse_name.choices=[(w.name) for w in warehouses]
+      if form.validate_on_submit():
+          item.assignments.append(ItemWarehouse(warehouse_name=form.warehouse_name.data, quantity=form.quantity.data))
+          db.session.commit()    
+          flash(f"Item {sku}'s inventory was assigned!","success")
+          return redirect(f'/view_inventory/{item.sku}')
+      else:
+          return render_template("edit_inventory_form.html",form=form,item=item)
 
 @app.route('/delete_item/<int:id>',methods=['GET','POST'])
 def delete_item(id):

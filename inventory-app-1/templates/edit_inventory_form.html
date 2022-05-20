@@ -1,7 +1,12 @@
 {% extends 'index.html' %}
 {% block content %}
-
+{% if assignment %}
 <h1 class="display-1 text-center mb-3">Edit Inventory for {{assignment.items_sku}}</h1>
+
+{% else %}
+
+<h1 class="display-1 text-center mb-3">Assign Inventory for {{item.sku}}</h1>
+{% endif %}
 
 <div class="row d-flex justify-content-center">
 
