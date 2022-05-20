@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template,flash,redirect
 from sqlalchemy.exc import IntegrityError
-from models import Item, db, connect_db,Warehouse
-from forms import CreateItem, CreateWarehouse
+from models import Item, ItemWarehouse, db, connect_db,Warehouse
+from forms import CreateAssignment, CreateItem, CreateWarehouse, EditAssignment
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -59,9 +59,9 @@ def create_warehouse():
       return redirect('/')
     
     return render_template('create_warehouse_form.html',form=form)
-@app.route('/edit_item/<int:id>/edit',methods=['GET','POST'])
-def edit_item(id):
-  item=Item.query.get_or_404(id)
+@app.route('/edit_item/<int:sku>/edit',methods=['GET','POST'])
+def edit_item(sku):
+  item=Item.query.get_or_404(sku)
   form=CreateItem(obj=item) 
   
   warehouses=Warehouse.query.all()
@@ -80,7 +80,23 @@ def edit_item(id):
   else:
     return render_template("edit_item_form.html", form=form,item=item)
 
-@app.route('/assign_inventory',methods=['GET','POST'])
+@app.route('/view_inventory/<int:sku>',methods=['GET','POST'])
+def view_inventory(sku):
+    item=Item.query.get_or_404(sku)
+    return render_template("view_inventory.html",item=item)
+@app.route('/edit_inventory/<int:sku>/<warehouse>',methods=['GET','POST'])
+def edit_inventory(sku,warehouse):
+    assignment=ItemWarehouse.query.filter(ItemWarehouse.items_sku ==sku, ItemWarehouse.warehouse_name==warehouse).first()
+    form=EditAssignment(obj=assignment)
+    if form.validate_on_submit():
+          assignment.items_sku=form.items_sku.data
+          assignment.warehouse_name=form.warehouse_name.data
+          assignment.quantity=form.quantity.data
+          db.session.commit()    
+          flash(f"Item {sku}'s inventory was updated!","success")
+          return redirect(f'/view_inventory/{assignment.items_sku}')
+    else:
+        return render_template("edit_inventory_form.html",form=form,assignment=assignment)
 
 @app.route('/delete_item/<int:id>',methods=['GET','POST'])
 def delete_item(id):

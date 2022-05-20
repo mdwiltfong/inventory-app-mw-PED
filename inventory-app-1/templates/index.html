@@ -30,12 +30,10 @@
       <thead>
         <tr>
           <th></th>
-          <th style="text-align:center" scope="col">Item ID</th>
           <th style="text-align:center" scope="col">Item SKU</th>
           <th style="text-align:center">Item Name</th>
           <th style="text-align:center" scope="col">Item Price</th>
-          <th style="text-align:center" scope="col">Quantity</th>
-          <th style="text-align:center" scope="col">Warehouse</th>
+          <th style="text-align:center" scope="col">Total Quantity</th>
         </tr>
       </thead>
       <tbody>
@@ -43,12 +41,12 @@
 
         <tr>
           <td> <a href="/edit_item/{{item.id}}/edit" class="btn btn-primary">Edit</a></td>
-          <td style="text-align: center">{{item.id}}</td>
           <td style="text-align: center">{{item.sku}}</td>
           <td style="text-align: center">{{item.name}}</td>
           <td style="text-align: center">{{item.price}}</td>
-          <td style="text-align: center">{{item.quantity}}</td>
-          <td style="text-align: center">{{item.warehouse.name}}</td>
+          <td style="text-align: center">{{item.total_quantity}}</td>
+          <td style="text-align: center"><a class="btn btn-primary" href='/view_inventory/{{item.sku}}'>Inventory</a>
+          </td>
 
           {% endfor %}
         </tr>
