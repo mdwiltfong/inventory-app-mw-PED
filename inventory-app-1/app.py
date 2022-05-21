@@ -24,15 +24,12 @@ def load_index():
 def create_item():
     """Creates inventory item"""
     try:
-            form=CreateItem()
-            warehouses=Warehouse.query.all()
-            form.warehouse_id.choices=[(w.name) for w in warehouses]
+            form=CreateItem()           
             if form.validate_on_submit():
                 new_item = Item(name=form.name.data,
                                     price=form.price.data,
-                                    quantity=form.quantity.data,
-                                    sku=form.sku.data,
-                                    warehouse_id=form.warehouse_id.data
+                                    total_quantity=form.total_quantity.data,
+                                    sku=form.sku.data
                                )
                 db.session.add(new_item)
                 db.session.commit()
@@ -42,7 +39,7 @@ def create_item():
             flash("SKU already exists","danger")
             return redirect('/')
           
-    return render_template('create_item_form.html',form=form,warehouses=warehouses)
+    return render_template('create_item_form.html',form=form)
 @app.route('/create_warehouse', methods=["POST","GET"])
 def create_warehouse():
     """Creates Warehouse Location"""
@@ -65,16 +62,13 @@ def edit_item(sku):
   form=CreateItem(obj=item) 
   
   warehouses=Warehouse.query.all()
-  form.warehouse_id.choices=[(w.name) for w in warehouses]
-  form.warehouse_id.default=item.warehouse_id
   if form.validate_on_submit():
     item.name=form.name.data
     item.price=form.price.data
-    item.quantity=form.quantity.data
+    item.total_quantity=form.total_quantity.data
     item.sku=form.sku.data
-    item.warehouse_id=form.warehouse_id.data
     db.session.commit()    
-    flash(f"Item {id} updated!","success")
+    flash(f"Item {sku} updated!","success")
     return redirect('/')
 
   else:
@@ -91,7 +85,6 @@ def edit_inventory(sku,warehouse):
     warehouses=Warehouse.query.all()
     form.warehouse_name.choices=[(w.name) for w in warehouses]
     if form.validate_on_submit():
-          assignment.items_sku=form.items_sku.data
           assignment.warehouse_name=form.warehouse_name.data
           assignment.quantity=form.quantity.data
           db.session.commit()    
@@ -114,11 +107,11 @@ def assign_inventory(sku):
       else:
           return render_template("edit_inventory_form.html",form=form,item=item)
 
-@app.route('/delete_item/<int:id>',methods=['GET','POST'])
-def delete_item(id):
-  Item.query.filter_by(id=id).delete()
+@app.route('/delete_item/<int:sku>',methods=['GET','POST'])
+def delete_item(sku):
+  Item.query.filter_by(sku=sku).delete()
   db.session.commit()
-  flash(f"Item {id} deleted!","success")
+  flash(f"Item {sku} deleted!","success")
   return redirect('/')
     
 # Makes sure this is the main process

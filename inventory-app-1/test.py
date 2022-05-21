@@ -1,36 +1,45 @@
 from unittest import TestCase
 from app import app
-from models import db,Warehouse,Item
+from models import db,Warehouse,Item,ItemWarehouse
 
 
 
 class test_crud(TestCase):
     ''' Reseed the database between tests '''
     def setUp(self):
+        # Create all tables
         db.drop_all()
         db.create_all()
-     # Add Warehouses
+        # Add Warehouses
         warehouse1=Warehouse(name='Frisco')
         warehouse2=Warehouse(name='Las Vegas')
         warehouse3=Warehouse(name='Riyadh')
         db.session.add_all([warehouse1,warehouse2,warehouse3])
         db.session.commit()
         # Add items
-        item1=Item(name="Shirt",price=12.45, quantity=45,sku=123456,warehouse_id="Frisco")
-        item2=Item(name="Red Shirt",price=15, quantity=85,sku=753159,warehouse_id="Las Vegas")
-        item3=Item(name="Green Shirt",price=85, quantity=45,sku=456789,warehouse_id="Riyadh")
-
-
-        # Add new objects to session, so they'll persist
+        item1=Item(name="Shirt",price=12.45, total_quantity=45,sku=123456)
+        item2=Item(name="Red Shirt",price=15, total_quantity=85,sku=753159)
+        item3=Item(name="Green Shirt",price=85, total_quantity=45,sku=456789)
         db.session.add_all([item1,item2,item3])
+        db.session.commit()
 
 
 
-        warehouse1.items.append(item1)
-        warehouse2.items.append(item2)
-        warehouse3.items.append(item3)
+        item1.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=45))
+        item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=55))
+        item1.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=65))
 
-        db.session.add_all([warehouse1,warehouse2,warehouse3])
+        item2.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=125))
+        item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=355))
+        item2.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=698))
+
+        item3.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=25))
+        item3.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=35))
+        item3.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=98))
+
+
+
+        db.session.add(item1)
         db.session.commit()
     
         
@@ -50,9 +59,8 @@ class test_crud(TestCase):
             data={
                 "name":'cheese',
                 'price':123,
-                'quantity': 43,
+                'total_quantity': 43,
                 'sku':375159,
-                'warehouse_id':'Frisco'
             }
         
             resp=client.post('/create_item',data=data,follow_redirects=True)
@@ -87,21 +95,19 @@ class test_crud(TestCase):
             data={
                 "name":'Cheese',
                 'price':999,
-                'quantity':445,
-                'sku':123456,
-                'warehouse_id':'Las Vegas'
+                'total_quantity':445,
+                'sku':123456
             }
-            resp=client.post('/edit_item/1/edit',data=data,follow_redirects=True)
+            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
 
             html=resp.get_data(as_text=True)
             updated_item=Item.query.filter(Item.sku==123456).first()
 
             self.assertEqual(resp.status_code,200)
-            self.assertIn('Item 1 updated!',html)
+            self.assertIn('Item 123456 updated!',html)
             self.assertEqual(updated_item.name,data['name'])
             self.assertEqual(updated_item.price,data['price'])
-            self.assertEqual(updated_item.quantity,data['quantity'])
-            self.assertEqual(updated_item.warehouse.name,data['warehouse_id'])
+            self.assertEqual(updated_item.total_quantity,data['total_quantity'])
             self.assertEqual(updated_item.sku,data['sku'])
     def test_delete_item(self):
         """Sending a post request to the /delete_item route will delete an item from the db"""
