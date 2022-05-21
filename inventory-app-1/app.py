@@ -60,12 +60,14 @@ def edit_item(sku):
   ''' Renders the createitem form, populated with the current details of the item. Also processes forms to update the item's details.  '''
   item=Item.query.get_or_404(sku)
   form=CreateItem(obj=item) 
-  
+  assignments=ItemWarehouse.query.filter(ItemWarehouse.items_sku == sku).all()
   warehouses=Warehouse.query.all()
   if form.validate_on_submit():
     item.name=form.name.data
     item.price=form.price.data
     item.total_quantity=form.total_quantity.data
+    for assignment in assignments:
+         assignment.items_sku=form.sku.data 
     item.sku=form.sku.data
     db.session.commit()    
     flash(f"Item {sku} updated!","success")
