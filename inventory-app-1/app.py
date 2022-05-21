@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY']="it's a secret"
-app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory-app-test'
+app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory-app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['WTF_CSRF_ENABLED'] = False
