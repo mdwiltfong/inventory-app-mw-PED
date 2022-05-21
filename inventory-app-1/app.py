@@ -58,23 +58,29 @@ def create_warehouse():
 @app.route('/edit_item/<int:sku>/edit',methods=['GET','POST'])
 def edit_item(sku):
   ''' Renders the createitem form, populated with the current details of the item. Also processes forms to update the item's details.  '''
-  item=Item.query.get_or_404(sku)
-  form=CreateItem(obj=item) 
-  assignments=ItemWarehouse.query.filter(ItemWarehouse.items_sku == sku).all()
-  warehouses=Warehouse.query.all()
-  if form.validate_on_submit():
-    item.name=form.name.data
-    item.price=form.price.data
-    item.total_quantity=form.total_quantity.data
-    for assignment in assignments:
-         assignment.items_sku=form.sku.data 
-    item.sku=form.sku.data
-    db.session.commit()    
-    flash(f"Item {sku} updated!","success")
-    return redirect('/')
+  try:
+      item=Item.query.get_or_404(sku)
+      form=CreateItem(obj=item) 
+      assignments=ItemWarehouse.query.filter(ItemWarehouse.items_sku == sku).all()
+      warehouses=Warehouse.query.all()
+      if form.validate_on_submit():
+        item.name=form.name.data
+        item.price=form.price.data
+        item.total_quantity=form.total_quantity.data
+        for assignment in assignments:
+            assignment.items_sku=form.sku.data 
+        item.sku=form.sku.data
+        db.session.commit()    
+        flash(f"Item {sku} updated!","success")
+        return redirect('/')
 
-  else:
-    return render_template("edit_item_form.html", form=form,item=item)
+      else:
+        return render_template("edit_item_form.html", form=form,item=item)
+  except IntegrityError:
+      db.session.rollback()
+      flash("SKU already exists","danger")
+      return redirect(f"/edit_item/{item.sku}/edit")
+     
 
 @app.route('/view_inventory/<int:sku>',methods=['GET','POST'])
 def view_inventory(sku):

@@ -1,46 +1,50 @@
-{% extends 'index.html'  %}
+{% extends 'index.html' %}
 {% block content %}
 
 <h1 class="display-1 text-center mb-3">Edit Item</h1>
+<div class="container d-flex justify-content-center" style="min-height:26px">
+    {% for category, msg in get_flashed_messages(with_categories=true) %}
+    <p style="text-align:center ; width:auto" class="p-0 w-25 alert alert-{{category}}  m-0">{{msg}}</p>
+    {% endfor %}
+</div>
+<div class="row d-flex justify-content-center">
 
-        <div class="row d-flex justify-content-center">
+    <div class="col-md-8 flex-column d-flex justify-content-center">
+        <form style="margin:0 auto" class="w-50 " action="" method="post">
+            {{form.hidden_tag()}}
+            {% for field in form
+            if field.widget.input_type !='hidden' %}
+            <div class="form-group">
+                {% if field.label == 'Warehouse'%}
+                {{field.label }}
+                {{field(class_="form-control")}}
+                Test
+                {% else %}
+                {{field.label }}
+                {{field(class_="form-control")}}
+                {% endif %}
+                {% for err in field.errors %}
+                <small class="form-text text-info">
+                    {{err}}
 
-            <div class="col-md-8 flex-column d-flex justify-content-center">
-                <form style="margin:0 auto" class="w-50 " action="" method="post">
-                    {{form.hidden_tag()}}
-                    {% for field in form
-                    if field.widget.input_type !='hidden' %}
-                    <div class="form-group">
-                    {% if field.label == 'Warehouse'%}
-                        {{field.label }}
-                        {{field(class_="form-control")}}
-                      Test
-                    {% else %}   
-                        {{field.label }}
-                        {{field(class_="form-control")}}
-                    {% endif %}
-                        {% for err in field.errors %}
-                        <small class="form-text text-info">
-                            {{err}}
+                </small>
+                {% endfor %}
+            </div>
 
-                        </small>
-                        {% endfor %}
-                    </div>
+            {% endfor %}
 
-                    {% endfor %}
-                  
-                     <div class="container d-flex justify-content-between mt-3">
-                        <button type="submit" class="btn btn-primary mx-1 btn-sm">Submit</button>
-                        <a href="/delete_item/{{item.sku}}" class="btn btn-sm btn-primary ">Delete</a>
-                        <a href="/" class="btn btn-sm btn-primary ">Cancel</a>
+            <div class="container d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-primary mx-1 btn-sm">Submit</button>
+                <a href="/delete_item/{{item.sku}}" class="btn btn-sm btn-primary ">Delete</a>
+                <a href="/" class="btn btn-sm btn-primary ">Cancel</a>
 
-                    </div>
-        
-                   
-                </form>
             </div>
 
 
-        </div>
+        </form>
     </div>
+
+
+</div>
+</div>
 {% endblock content%}
