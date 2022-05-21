@@ -1,36 +1,45 @@
 from unittest import TestCase
 from app import app
-from models import db,Warehouse,Item
+from models import db,Warehouse,Item,ItemWarehouse
 
 
 
 class test_crud(TestCase):
     ''' Reseed the database between tests '''
     def setUp(self):
+        # Create all tables
         db.drop_all()
         db.create_all()
-     # Add Warehouses
+        # Add Warehouses
         warehouse1=Warehouse(name='Frisco')
         warehouse2=Warehouse(name='Las Vegas')
         warehouse3=Warehouse(name='Riyadh')
         db.session.add_all([warehouse1,warehouse2,warehouse3])
         db.session.commit()
         # Add items
-        item1=Item(name="Shirt",price=12.45, quantity=45,sku=123456,warehouse_id="Frisco")
-        item2=Item(name="Red Shirt",price=15, quantity=85,sku=753159,warehouse_id="Las Vegas")
-        item3=Item(name="Green Shirt",price=85, quantity=45,sku=456789,warehouse_id="Riyadh")
-
-
-        # Add new objects to session, so they'll persist
+        item1=Item(name="Shirt",price=12.45, total_quantity=45,sku=123456)
+        item2=Item(name="Red Shirt",price=15, total_quantity=85,sku=753159)
+        item3=Item(name="Green Shirt",price=85, total_quantity=45,sku=456789)
         db.session.add_all([item1,item2,item3])
+        db.session.commit()
 
 
 
-        warehouse1.items.append(item1)
-        warehouse2.items.append(item2)
-        warehouse3.items.append(item3)
+        item1.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=45))
+        item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=55))
 
-        db.session.add_all([warehouse1,warehouse2,warehouse3])
+
+        item2.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=125))
+        item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=355))
+        item2.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=698))
+
+        item3.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=25))
+        item3.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=35))
+        item3.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=98))
+
+
+
+        db.session.add(item1)
         db.session.commit()
     
         
@@ -40,9 +49,19 @@ class test_crud(TestCase):
             resp = client.get('/')
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<td style="text-align: center">123456</td>', html)
-            self.assertIn('<td style="text-align: center">456789</td>', html)
-            self.assertIn('<td style="text-align: center">753159</td>', html)
+            self.assertIn('123456', html)
+            self.assertIn('456789', html)
+            self.assertIn('753159', html)
+    def test_view_inventory(self):
+        """Get request should return HTML a list of assignments"""
+        with app.test_client() as client:
+            resp = client.get('/view_inventory/123456')
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<td style="text-align: center">Frisco</td>', html)
+            self.assertIn('<td style="text-align: center">45</td>', html)
+            self.assertIn('<td style="text-align: center">Las Vegs</td>', html)
+            self.assertIn('<td style="text-align: center">55</td>', html)
     def test_create(self):
         ''' post request to create_item should return 302 
         (a redirect) with a banner saying 'Item Created'''
@@ -50,9 +69,8 @@ class test_crud(TestCase):
             data={
                 "name":'cheese',
                 'price':123,
-                'quantity': 43,
+                'total_quantity': 43,
                 'sku':375159,
-                'warehouse_id':'Frisco'
             }
         
             resp=client.post('/create_item',data=data,follow_redirects=True)
@@ -61,6 +79,20 @@ class test_crud(TestCase):
             self.assertEqual(resp.status_code,200)
             self.assertIn('Item Created',html)
             self.assertEqual(new_item.sku,data['sku'])
+    def test_assign_inventory(self):
+        ''' post request to assign_inventory should return 200 with a banner saying 'Item *item sku*'s inventory was assigned! Created'''
+        with app.test_client() as client:
+            data={
+                "warehouse_name":'Riyadh',
+                "quantity":45
+            }
+        
+            resp=client.post('/assign_inventory/123456',data=data,follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            new_assignment=ItemWarehouse.query.filter(ItemWarehouse.items_sku == 123456,ItemWarehouse.warehouse_name == data['warehouse_name']).first()
+            self.assertEqual(resp.status_code,200)
+            self.assertIn("Item 123456&#39;s inventory was assigned!",html)
+            self.assertEqual(new_assignment.items_sku,123456)
     def test_create_warehouse(self):
         """post request to /create_warehouse will return a 200 
         http response with a banner saying 'warehouse created"""
@@ -87,21 +119,44 @@ class test_crud(TestCase):
             data={
                 "name":'Cheese',
                 'price':999,
-                'quantity':445,
-                'sku':123456,
-                'warehouse_id':'Las Vegas'
+                'total_quantity':445,
+                'sku':123456
             }
-            resp=client.post('/edit_item/1/edit',data=data,follow_redirects=True)
+            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
 
             html=resp.get_data(as_text=True)
             updated_item=Item.query.filter(Item.sku==123456).first()
 
             self.assertEqual(resp.status_code,200)
-            self.assertIn('Item 1 updated!',html)
+            self.assertIn('Item 123456 updated!',html)
             self.assertEqual(updated_item.name,data['name'])
             self.assertEqual(updated_item.price,data['price'])
-            self.assertEqual(updated_item.quantity,data['quantity'])
-            self.assertEqual(updated_item.warehouse.name,data['warehouse_id'])
+            self.assertEqual(updated_item.total_quantity,data['total_quantity'])
+            self.assertEqual(updated_item.sku,data['sku'])
+    def test_edit_inventory_assignment(self):
+        """Post request to /edit_inventory/sku/edit will do the following:
+            - Edit an inventory assignment.
+            - Return HTTP status 200 
+            - Change the warehouse location, which will assign the inventory. 
+            - Render a banner with a success message
+         """
+        with app.test_client() as client:
+            data={
+                "name":'Cheese',
+                'price':999,
+                'total_quantity':445,
+                'sku':123456
+            }
+            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
+
+            html=resp.get_data(as_text=True)
+            updated_item=Item.query.filter(Item.sku==123456).first()
+
+            self.assertEqual(resp.status_code,200)
+            self.assertIn('Item 123456 updated!',html)
+            self.assertEqual(updated_item.name,data['name'])
+            self.assertEqual(updated_item.price,data['price'])
+            self.assertEqual(updated_item.total_quantity,data['total_quantity'])
             self.assertEqual(updated_item.sku,data['sku'])
     def test_delete_item(self):
         """Sending a post request to the /delete_item route will delete an item from the db"""

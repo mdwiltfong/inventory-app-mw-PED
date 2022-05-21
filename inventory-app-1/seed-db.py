@@ -1,6 +1,6 @@
-"""Seed file to make sample data for pets db."""
+"""Seed file to make sample data for invenotyr-app."""
 
-from models import Item,Warehouse,db
+from models import Item,Warehouse,db,ItemWarehouse
 from app import app
 
 # Create all tables
@@ -13,22 +13,27 @@ warehouse3=Warehouse(name='Riyadh')
 db.session.add_all([warehouse1,warehouse2,warehouse3])
 db.session.commit()
 # Add items
-item1=Item(name="Shirt",price=12.45, quantity=45,sku=123456,warehouse_id="Frisco")
-item2=Item(name="Red Shirt",price=15, quantity=85,sku=753159,warehouse_id="Las Vegas")
-item3=Item(name="Green Shirt",price=85, quantity=45,sku=456789,warehouse_id="Riyadh")
-
-
-# Add new objects to session, so they'll persist
+item1=Item(name="Shirt",price=12.45, total_quantity=45,sku=123456)
+item2=Item(name="Red Shirt",price=15, total_quantity=85,sku=753159)
+item3=Item(name="Green Shirt",price=85, total_quantity=45,sku=456789)
 db.session.add_all([item1,item2,item3])
-
-
-
-warehouse1.items.append(item1)
-warehouse2.items.append(item2)
-warehouse3.items.append(item3)
-
-db.session.add_all([warehouse1,warehouse2,warehouse3])
 db.session.commit()
 
-# Commit--otherwise, this never gets saved!
+
+
+item1.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=45))
+item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=55))
+item1.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=65))
+
+item2.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=125))
+item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=355))
+item2.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=698))
+
+item3.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=25))
+item3.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=35))
+item3.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=98))
+
+
+
+db.session.add(item1)
 db.session.commit()
