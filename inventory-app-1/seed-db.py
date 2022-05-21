@@ -1,4 +1,4 @@
-"""Seed file to make sample data for pets db."""
+"""Seed file to make sample data for invenotyr-app."""
 
 from models import Item,Warehouse,db,ItemWarehouse
 from app import app
@@ -22,15 +22,15 @@ db.session.commit()
 
 
 item1.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=45))
-item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=55))
+item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=55))
 item1.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=65))
 
 item2.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=125))
-item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=355))
+item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=355))
 item2.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=698))
 
 item3.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=25))
-item3.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=35))
+item3.assignments.append(ItemWarehouse(warehouse_name='Las Vegas', quantity=35))
 item3.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=98))
 
 

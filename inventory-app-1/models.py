@@ -9,6 +9,12 @@ def connect_db(app):
   db.init_app(app)
 
 class Item(db.Model):
+  ''' This is the data models for items. 
+  It has two relationships. "assignments" handles the relationship between items and their assignments to warehouses,
+  while "warehouses" is a 'through' relationship between items and warhouses.
+  YOu can also find the 'repr' method that defines how the Item object will appear in iPython
+  
+   '''    
   __tablename__='items'
   id=db.Column(
     db.Integer,
@@ -44,14 +50,17 @@ class Item(db.Model):
     return f'<Item #{self.id} {self.name} {self.price}>'
 
 class Warehouse(db.Model):
+  ''' This model represents the warehouses created by the client.  '''    
   __tablename__='warehouses'
   name=db.Column(
       db.Text,
       nullable=False,
     primary_key=True
     )
-
+  def __repr__(self):
+        return f'<Warehouse #{self.name}>'
 class ItemWarehouse(db.Model):
+  ''' This model represents the association table between warehouses and items. '''
   __tablename__='items_warehouses'
 
   id=db.Column(

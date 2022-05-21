@@ -27,7 +27,7 @@ class test_crud(TestCase):
 
         item1.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=45))
         item1.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=55))
-        item1.assignments.append(ItemWarehouse(warehouse_name='Riyadh', quantity=65))
+
 
         item2.assignments.append(ItemWarehouse(warehouse_name='Frisco', quantity=125))
         item2.assignments.append(ItemWarehouse(warehouse_name='Las Vegs', quantity=355))
@@ -49,9 +49,19 @@ class test_crud(TestCase):
             resp = client.get('/')
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<td style="text-align: center">123456</td>', html)
-            self.assertIn('<td style="text-align: center">456789</td>', html)
-            self.assertIn('<td style="text-align: center">753159</td>', html)
+            self.assertIn('123456', html)
+            self.assertIn('456789', html)
+            self.assertIn('753159', html)
+    def test_view_inventory(self):
+        """Get request should return HTML a list of assignments"""
+        with app.test_client() as client:
+            resp = client.get('/view_inventory/123456')
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<td style="text-align: center">Frisco</td>', html)
+            self.assertIn('<td style="text-align: center">45</td>', html)
+            self.assertIn('<td style="text-align: center">Las Vegs</td>', html)
+            self.assertIn('<td style="text-align: center">55</td>', html)
     def test_create(self):
         ''' post request to create_item should return 302 
         (a redirect) with a banner saying 'Item Created'''
@@ -69,6 +79,20 @@ class test_crud(TestCase):
             self.assertEqual(resp.status_code,200)
             self.assertIn('Item Created',html)
             self.assertEqual(new_item.sku,data['sku'])
+    def test_assign_inventory(self):
+        ''' post request to assign_inventory should return 200 with a banner saying 'Item *item sku*'s inventory was assigned! Created'''
+        with app.test_client() as client:
+            data={
+                "warehouse_name":'Riyadh',
+                "quantity":45
+            }
+        
+            resp=client.post('/assign_inventory/123456',data=data,follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            new_assignment=ItemWarehouse.query.filter(ItemWarehouse.items_sku == 123456,ItemWarehouse.warehouse_name == data['warehouse_name']).first()
+            self.assertEqual(resp.status_code,200)
+            self.assertIn("Item 123456&#39;s inventory was assigned!",html)
+            self.assertEqual(new_assignment.items_sku,123456)
     def test_create_warehouse(self):
         """post request to /create_warehouse will return a 200 
         http response with a banner saying 'warehouse created"""
@@ -88,6 +112,31 @@ class test_crud(TestCase):
         """Post request to /edit_item will do the following:
             - Edit an item.
             - Return HTTP status 200 (meaning a successful redirect occured)
+            - Change the warehouse location, which will assign the inventory. 
+            - Render a banner with a success message
+         """
+        with app.test_client() as client:
+            data={
+                "name":'Cheese',
+                'price':999,
+                'total_quantity':445,
+                'sku':123456
+            }
+            resp=client.post('/edit_item/123456/edit',data=data,follow_redirects=True)
+
+            html=resp.get_data(as_text=True)
+            updated_item=Item.query.filter(Item.sku==123456).first()
+
+            self.assertEqual(resp.status_code,200)
+            self.assertIn('Item 123456 updated!',html)
+            self.assertEqual(updated_item.name,data['name'])
+            self.assertEqual(updated_item.price,data['price'])
+            self.assertEqual(updated_item.total_quantity,data['total_quantity'])
+            self.assertEqual(updated_item.sku,data['sku'])
+    def test_edit_inventory_assignment(self):
+        """Post request to /edit_inventory/sku/edit will do the following:
+            - Edit an inventory assignment.
+            - Return HTTP status 200 
             - Change the warehouse location, which will assign the inventory. 
             - Render a banner with a success message
          """
